@@ -10,26 +10,9 @@ case class LiteralArgument(literal: Lit) extends Diagnostic {
     s"Use named arguments for literals such as 'parameterName = $literal'"
 }
 
-case class NoLiteralArgumentsConfig(
-    disabledLiterals: List[String] = List("Boolean")
-) {
-  def isDisabled(lit: Lit): Boolean = {
-    val kind = lit.productPrefix.stripPrefix("Lit.")
-    disabledLiterals.contains(kind)
-  }
-}
-
-object NoLiteralArgumentsConfig {
-  val default = NoLiteralArgumentsConfig()
-  implicit val surface =
-    metaconfig.generic.deriveSurface[NoLiteralArgumentsConfig]
-  implicit val decoder =
-    metaconfig.generic.deriveDecoder(default)
-}
-
-class NoLiteralArguments(config: NoLiteralArgumentsConfig)
+class NoLiteralArguments(config: LiteralArgumentsConfig)
     extends SyntacticRule("NoLiteralArguments") {
-  def this() = this(NoLiteralArgumentsConfig.default)
+  def this() = this(LiteralArgumentsConfig.default)
   override def withConfiguration(config: Configuration): Configured[Rule] = {
     config.conf
       .getOrElse("NoLiteralArguments")(this.config)

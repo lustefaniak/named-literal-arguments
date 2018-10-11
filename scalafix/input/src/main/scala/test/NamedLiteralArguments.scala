@@ -1,5 +1,9 @@
 /*
 rule = NamedLiteralArguments
+NamedLiteralArguments.disabledLiterals = [
+  Int
+  Boolean
+]
  */
 package test
 
@@ -9,6 +13,7 @@ object NamedLiteralArguments {
   def setFoo(bar: Boolean): Unit = {}
   def version(version: Int): Unit = {}
   def setBar(foo: Boolean, bar: Boolean): Unit = {}
+  def print(str:String):Unit = {}
   complete(true)
   complete(isSuccess = true)
   complete(false)
@@ -16,4 +21,5 @@ object NamedLiteralArguments {
   setFoo(false)
   version(123)
   setBar(false, true)
+  print("foo")
 }

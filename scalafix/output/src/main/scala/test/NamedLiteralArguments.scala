@@ -6,11 +6,13 @@ object NamedLiteralArguments {
   def setFoo(bar: Boolean): Unit = {}
   def version(version: Int): Unit = {}
   def setBar(foo: Boolean, bar: Boolean): Unit = {}
+  def print(str:String):Unit = {}
   complete(isSuccess = true)
   complete(isSuccess = true)
   complete(isSuccess = false)
-  finish(2, isError = true)
+  finish(n = 2, isError = true)
   setFoo(false)
   version(123)
   setBar(foo = false, bar = true)
+  print("foo")
 }
