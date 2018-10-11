@@ -2,12 +2,30 @@ package fix
 
 import metaconfig.Configured
 import scalafix.v1._
+
 import scala.meta._
 
-class NamedLiteralArguments(config: LiteralArgumentsConfig)
+case class NamedLiteralArgumentsConfig(
+    disabledLiterals: List[String] = List("Boolean")
+) {
+  def isDisabled(lit: Lit): Boolean = {
+    val kind = lit.productPrefix.stripPrefix("Lit.")
+    disabledLiterals.contains(kind)
+  }
+}
+
+object NamedLiteralArgumentsConfig {
+  val default = NamedLiteralArgumentsConfig()
+  implicit val surface =
+    metaconfig.generic.deriveSurface[NamedLiteralArgumentsConfig]
+  implicit val decoder =
+    metaconfig.generic.deriveDecoder(default)
+}
+
+class NamedLiteralArguments(config: NamedLiteralArgumentsConfig)
     extends SemanticRule("NamedLiteralArguments") {
 
-  def this() = this(LiteralArgumentsConfig.default)
+  def this() = this(NamedLiteralArgumentsConfig.default)
 
   override def withConfiguration(config: Configuration): Configured[Rule] = {
     config.conf
