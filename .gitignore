@@ -1,3 +1,7 @@
+
+# Created by https://www.gitignore.io/api/scala,intellij
+
+### Scala ###
 *.class
 *.log
 
@@ -16,23 +20,78 @@ project/plugins/project/
 .scala_dependencies
 .worksheet
 
-.idea
-
 # ENSIME specific
 .ensime_cache/
 .ensime
 
 
-node_modules
+### Intellij ###
+# Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and Webstorm
+# Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
-lib/core/metadata.js
-lib/core/MetadataBlog.js
+# User-specific stuff:
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/dictionaries
+.idea/vcs.xml
+.idea/jsLibraryMappings.xml
 
-website/translated_docs
-website/build/
-website/yarn.lock
-website/node_modules
-website/i18n/*
-!website/i18n/en.json
+# Sensitive or high-churn files:
+.idea/dataSources.ids
+.idea/dataSources.xml
+.idea/dataSources.local.xml
+.idea/sqlDataSources.xml
+.idea/dynamic.xml
+.idea/uiDesigner.xml
 
-out/
+# Gradle:
+.idea/gradle.xml
+.idea/libraries
+
+# Mongo Explorer plugin:
+.idea/mongoSettings.xml
+
+## File-based project format:
+*.iws
+
+## Plugin-specific files:
+
+# IntelliJ
+/out/
+
+# mpeltonen/sbt-idea plugin
+.idea_modules/
+
+# JIRA plugin
+atlassian-ide-plugin.xml
+
+# Crashlytics plugin (for Android Studio and IntelliJ)
+com_crashlytics_export_strings.xml
+crashlytics.properties
+crashlytics-build.properties
+fabric.properties
+
+### Intellij Patch ###
+# Comment Reason: https://github.com/joeblau/gitignore.io/issues/186#issuecomment-215987721
+
+# *.iml
+# modules.xml
+# .idea/misc.xml 
+# *.ipr
+.idea
+.jfr
+native/
+/.bloop-config
+
+scripts/remove-projects/*.ids
+scripts/remove-projects/ids_to_remove
+/scripts/remove-projects/removals_payload
+
+.metals
+/chronicle-app/etc
+scripts/*.jsonl
+scripts/*.json
+scripts/*.txt
+**/.DS_Store
+.vscode
+.bloop

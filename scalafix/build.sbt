@@ -16,7 +16,8 @@ inThisBuild(
     addCompilerPlugin(scalafixSemanticdb),
     scalacOptions ++= List(
       "-Yrangepos"
-    )
+    ),
+    scalafmtOnCompile := true
   )
 )
 

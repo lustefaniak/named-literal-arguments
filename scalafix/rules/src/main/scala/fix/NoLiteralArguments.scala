@@ -27,24 +27,21 @@ object NoLiteralArgumentsConfig {
     metaconfig.generic.deriveDecoder(default)
 }
 
-class NoLiteralArguments(config: NamedLiteralArgumentsConfig)
-    extends SyntacticRule("NoLiteralArguments") {
+class NoLiteralArguments(config: NamedLiteralArgumentsConfig) extends SyntacticRule("NoLiteralArguments") {
   def this() = this(NamedLiteralArgumentsConfig.default)
-  override def withConfiguration(config: Configuration): Configured[Rule] = {
+  override def withConfiguration(config: Configuration): Configured[Rule] =
     config.conf
       .getOrElse("NoLiteralArguments")(this.config)
       .map(newConfig => new NoLiteralArguments(newConfig))
-  }
-  override def fix(implicit doc: SyntacticDocument): Patch = {
+  override def fix(implicit doc: SyntacticDocument): Patch =
     doc.tree
       .collect {
         case Term.Apply(_, args) =>
           args.collect {
-            case t: Lit if config.isDisabled(t) =>
+            case t: Lit if config.isChecked(t) =>
               Patch.lint(LiteralArgument(t))
           }
       }
       .flatten
       .asPatch
-  }
 }

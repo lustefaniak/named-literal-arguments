@@ -6,11 +6,12 @@ import scalafix.v1._
 import scala.meta._
 
 case class NamedLiteralArgumentsConfig(
-    disabledLiterals: List[String] = List("Boolean")
+    checkedLiterals: List[String] = List("Boolean"),
+    buildersPrefix: List[String] = List("set", "with")
 ) {
-  def isDisabled(lit: Lit): Boolean = {
+  def isChecked(lit: Lit): Boolean = {
     val kind = lit.productPrefix.stripPrefix("Lit.")
-    disabledLiterals.contains(kind)
+    checkedLiterals.contains(kind)
   }
 }
 
@@ -22,32 +23,33 @@ object NamedLiteralArgumentsConfig {
     metaconfig.generic.deriveDecoder(default)
 }
 
-class NamedLiteralArguments(config: NamedLiteralArgumentsConfig)
-    extends SemanticRule("NamedLiteralArguments") {
+class NamedLiteralArguments(config: NamedLiteralArgumentsConfig) extends SemanticRule("NamedLiteralArguments") {
 
   def this() = this(NamedLiteralArgumentsConfig.default)
 
-  override def withConfiguration(config: Configuration): Configured[Rule] = {
+  override def withConfiguration(config: Configuration): Configured[Rule] =
     config.conf
       .getOrElse("NamedLiteralArguments")(this.config)
       .map(newConfig => new NamedLiteralArguments(newConfig))
-  }
 
-  override def fix(implicit doc: SemanticDocument): Patch = {
+  private[this] def isSetterOrBuilder(info: SymbolInformation): Boolean =
+    config.buildersPrefix.exists { prefix =>
+      info.displayName.startsWith(prefix)
+    }
+
+  override def fix(implicit doc: SemanticDocument): Patch =
     doc.tree
       .collect {
         case Term.Apply(fun, args) =>
           args.zipWithIndex.collect {
-            case (t: Lit, i) if config.isDisabled(t) =>
+            case (t: Lit, i) if config.isChecked(t) =>
               fun.symbol.info match {
                 case Some(info) =>
                   info.signature match {
-                    case method: MethodSignature
-                        if method.parameterLists.nonEmpty =>
-                      val parameter = method.parameterLists.head(i)
+                    case method: MethodSignature if method.parameterLists.nonEmpty =>
+                      val parameter     = method.parameterLists.head(i)
                       val parameterName = parameter.displayName
-                      if (method.parameterLists.head.size != 1 || (parameterName != info.displayName && !info.displayName
-                            .startsWith("set"))) {
+                      if (method.parameterLists.head.size != 1 || (parameterName != info.displayName && !isSetterOrBuilder(info))) {
                         Patch.addLeft(t, s"$parameterName = ")
                       } else {
                         Patch.empty
@@ -64,5 +66,4 @@ class NamedLiteralArguments(config: NamedLiteralArgumentsConfig)
       }
       .flatten
       .asPatch
-  }
 }
